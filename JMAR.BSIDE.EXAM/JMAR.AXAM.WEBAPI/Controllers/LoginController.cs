@@ -69,7 +69,10 @@ namespace JMAR.AXAM.WEBAPI.Controllers
             }
             catch(Exception Ex)
             {
-
+                List<ErrorDto> errorDtos = new List<ErrorDto>();
+                errorDtos.Add(new ErrorDto { Code = "400", Message = "Usuario o password incorrecto" });
+                response.Sucess = false;
+                response.ErrorList = errorDtos;
             }
 
             //var response = new Models.BaseResponse() { Sucess = true, ErrorList = new List<PpcProyect.Entities.ErrorDto>() };
