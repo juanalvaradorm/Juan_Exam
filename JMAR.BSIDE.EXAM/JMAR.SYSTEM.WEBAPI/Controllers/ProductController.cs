@@ -31,6 +31,7 @@ namespace JMAR.SYSTEM.WEBAPI.Controllers
                 => await base.Get(pagingParameter, entityFilter, ct);
 
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
         [ProducesResponseType(201, Type = typeof(ProductOutputViewModel))]
         [ProducesResponseType(500, Type = typeof(GenericError))]
