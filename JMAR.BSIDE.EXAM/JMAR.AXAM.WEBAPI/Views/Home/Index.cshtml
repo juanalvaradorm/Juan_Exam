@@ -1,0 +1,181 @@
+﻿@model IEnumerable<JMAR.SYSTEM.DOMAIN.Entities.ProductOutputViewModel>;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Agenda</h1>
+    <p>
+        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#ModalContrato">Nuevo</button>
+    </p>
+    <table class="table table-responsive-sm">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Costo</th>
+                <th>CantidadInventario</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => item.IdProduct)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.Nombre)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.Costo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.CantidadInventario)
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <td colspan="7" class="text-center">No se encontrarón registros.</td>
+            }
+        </tbody>
+    </table>
+</div>
+<form>
+    <div class="modal fade text-dark" id="ModalContrato" tabindex="-1" role="dialog" aria-labelledby="ModalContrato" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title " id="exampleModalLabel">Nuevo Contacto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerra">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1"><i>Nombre</i></label>
+                        <input type="text" id="NombreCompleto" required class="form-control text-left" />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1"><i>Email</i></label>
+                        <input type="email" id="Email" required class="form-control text-left" />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1"><i>Telefono</i></label>
+                        <input type="tel" id="Telefono" required class="form-control text-left" />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1"><i>Fecha de Nacimiento</i></label>
+                        <input type="date" id="FechaNacimiento" name="trip-start" value="2020-06-04" required class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1"><i>Password</i></label>
+                        <input type="password" id="Password" name="trip-start" value="2020-06-04" required class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="NewDato()" id="Guarda">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+
+    $(document).ready(function () {
+        var now = new Date();
+
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+
+        $("#FechaNacimiento").val(today);
+    });
+
+    function NewDato() {
+
+        if ($("#NombreCompleto").val() == "") {
+            alert('El nombre es obligatorio');
+            $("#NombreCompleto").focus();
+            return;
+        }
+        if ($("#Telefono").val() == "") {
+            alert('El teléfono es obligatorio');
+            $("#Telefono").focus();
+            return;
+        }
+        if ($("#Email").val() == "") {
+            alert('El email es obligatorio');
+            $("#Email").focus();
+            return;
+        }
+        if ($("#FechaNacimiento").val() == "") {
+            alert('La fecha es obligatorio');
+            $("#FechaNacimiento").focus();
+            return;
+        }
+        if ($("#Password").val() == "") {
+            alert('El password es obligatorio');
+            $("#Password").focus();
+            return;
+        }
+
+        var date = new Date($('#FechaNacimiento').val());
+
+        var day = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+
+        var today = (day) + "-" + (month) + "-" + date.getFullYear();
+
+
+        var formdata = new FormData();
+        formdata.append("model[idPersona]", 0);
+        formdata.append("model[NombreCompleto]", $("#NombreCompleto").val());
+        formdata.append("model[Telefono]", $("#Telefono").val());
+        formdata.append("model[Email]", $("#Email").val());
+        formdata.append("model[FechaNacimiento]", $("#FechaNacimiento").val());
+        formdata.append("model[Password]", $("#Password").val());
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddAgenda", "Home")',
+            cache: false,
+            processData: false,
+            contentType: false,
+            data: formdata,
+            async: true,
+            success: function (result) {
+                $("#NombreCompleto").val("");
+                $("#Telefono").val("");
+                $("#Email").val("");
+                $("#FechaNacimiento").val("");
+                var urmodel = '@Url.Action("Index", "Home")'; //,
+                window.location.href = urmodel;
+            }, error: function (xhr, status, p3, p4) {
+                debugger;
+                alert('Error' + status);
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                console.log(err);
+            }
+        });
+
+    }
+</script>
